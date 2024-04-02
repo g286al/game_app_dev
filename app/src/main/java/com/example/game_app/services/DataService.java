@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 public class DataService {
     private static final ArrayList<Game> arrGame = new ArrayList<>();
-
+    private static int position;
     public static ArrayList<Game> getArrGame() {
         String gURL = "https://api.rawg.io/api/games?key=2c8eecb3a50b49038dea2be27a8711a9";
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -59,5 +59,8 @@ public class DataService {
         }
 
         return arrGame;
+    }
+    public static Game getClickedGame(int position){
+        return arrGame.get(position);
     }
 }

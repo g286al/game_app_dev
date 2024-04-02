@@ -4,17 +4,18 @@ public class Game {
     private String name;
     private String releaseDate;
     private String imageUrl;
-
     private String rating;
     private String genre;
-    public Game(String name, String releaseDate, String imageUrl,String rating,String genre) {
+
+    public Game(String name, String releaseDate, String imageUrl, String rating, String genre) {
         this.name = name;
         this.releaseDate = releaseDate;
         this.imageUrl = imageUrl;
-        this.genre = genre;
         this.rating = rating;
+        this.genre = genre;
     }
 
+    // Getters and setters
     public String getName() {
         return name;
     }
@@ -37,5 +38,21 @@ public class Game {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public String getRating() {
+        return rating;
+    }
+
+    public void setRating(String rating) {
+        this.rating = rating;
+    }
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
     }
 }

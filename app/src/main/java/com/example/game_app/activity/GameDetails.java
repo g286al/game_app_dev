@@ -1,53 +1,54 @@
 package com.example.game_app.activity;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.example.game_app.R;
+import com.example.game_app.models.Game;
+import com.example.game_app.services.DataService;
+import com.squareup.picasso.Picasso;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link GameDetails#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class GameDetails extends Fragment {
 
-    public GameDetails() {
-        // Required empty public constructor
+    private int position;
+
+    public GameDetails(int position) {
+        this.position = position;
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment GameDetails.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static GameDetails newInstance(String param1, String param2) {
-        GameDetails fragment = new GameDetails();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
+    @Nullable
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-        }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_game_details, container, false);
+        View view = inflater.inflate(R.layout.fragment_game_details, container, false);
+
+        // Retrieve the game object based on the position
+        Game game = DataService.getClickedGame(position);
+
+        // Bind views
+        ImageView gameDetailImg = view.findViewById(R.id.gameDetailImg);
+        TextView gameDetailName = view.findViewById(R.id.gameDetailName);
+        TextView gameDetailRelease = view.findViewById(R.id.gameDetailRelease);
+        TextView gameDetailRating = view.findViewById(R.id.gameDetailRating);
+        TextView gameDetailGenre = view.findViewById(R.id.gameDetailGenre);
+        TextView gameDetailDescription = view.findViewById(R.id.gameDetailDescription);
+
+        Picasso.get().load(game.getImageUrl()).into(gameDetailImg);
+        // Set text values
+        gameDetailName.setText(game.getName());
+        gameDetailRelease.setText(game.getReleaseDate());
+        gameDetailRating.setText(game.getRating());
+        gameDetailGenre.setText(game.getGenre());
+
+        return view;
     }
 }

@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.game_app.services.DataService;
 import com.squareup.picasso.Picasso;
 
 import com.example.game_app.models.Game;
@@ -19,10 +21,14 @@ import java.util.ArrayList;
 public class GameAdapter extends RecyclerView.Adapter<GameAdapter.MyViewHolder> {
     public Context context;
     public ArrayList<Game> arrGame;
+    public ItemClickListener ItemClickListener;
+    int selectedPosition=-1;
 
-    public GameAdapter(Context context, ArrayList<Game> arrGame) {
+
+    public GameAdapter(Context context, ArrayList<Game> arrGame,ItemClickListener ItemClickListener) {
         this.context = context;
         this.arrGame = arrGame;
+        this.ItemClickListener = ItemClickListener;
     }
 
     @NonNull
@@ -38,7 +44,14 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.MyViewHolder> 
         holder.name.setText(game.getName());
         holder.release.setText(game.getReleaseDate());
         Picasso.get().load(game.getImageUrl()).into(holder.img);
+        int currentPosition = holder.getAdapterPosition();
 
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ItemClickListener.onClick(currentPosition);
+            }
+        });
     }
 
     @Override
