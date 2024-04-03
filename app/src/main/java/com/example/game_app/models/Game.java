@@ -6,16 +6,25 @@ public class Game {
     private String imageUrl;
     private String rating;
     private String genre;
+    private String description; // New field for description
 
-    public Game(String name, String releaseDate, String imageUrl, String rating, String genre) {
+    public Game(String name, String releaseDate, String imageUrl, String rating, String genre, String description) {
         this.name = name;
         this.releaseDate = releaseDate;
         this.imageUrl = imageUrl;
         this.rating = rating;
         this.genre = genre;
+        this.description = description;
     }
 
-    // Getters and setters
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public String getName() {
         return name;
     }

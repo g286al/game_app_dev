@@ -6,8 +6,30 @@
     tools:context=".activity.GamesListFragment">
 
     <androidx.recyclerview.widget.RecyclerView
-    android:id="@+id/r_view"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" />
+        android:id="@+id/r_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/previouspage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+        android:text="previous" />
+
+        <Button
+            android:id="@+id/nextpage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+        android:text="next" />
+
+    </LinearLayout>
 
 </FrameLayout>

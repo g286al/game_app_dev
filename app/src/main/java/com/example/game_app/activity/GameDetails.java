@@ -1,6 +1,5 @@
 package com.example.game_app.activity;
 
-import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,7 +47,7 @@ public class GameDetails extends Fragment {
         gameDetailRelease.setText(game.getReleaseDate());
         gameDetailRating.setText(game.getRating());
         gameDetailGenre.setText(game.getGenre());
-
+        gameDetailDescription.setText(game.getDescription());
         return view;
     }
 }

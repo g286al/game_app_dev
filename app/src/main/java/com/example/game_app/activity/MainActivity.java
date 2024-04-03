@@ -1,6 +1,5 @@
 package com.example.game_app.activity;
 
-import android.content.ClipData;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -34,5 +33,9 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.frameLayout, mFragment).addToBackStack("Shalom").commit();
+    }
+    void tapNext()
+    {
+
     }
 }
