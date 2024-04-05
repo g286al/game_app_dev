@@ -10,11 +10,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.game_app.services.DataService;
-import com.squareup.picasso.Picasso;
-
-import com.example.game_app.models.Game;
 import com.example.game_app.R;
+import com.example.game_app.models.Game;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -43,7 +41,7 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.MyViewHolder> 
         Game game = arrGame.get(position);
         holder.name.setText(game.getName());
         holder.release.setText(game.getReleaseDate());
-        Picasso.get().load(game.getImageUrl()).into(holder.img);
+        Picasso.get().load(game.getImageUrl()).resize(2480,1600).into(holder.img);
         int currentPosition = holder.getAdapterPosition();
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {

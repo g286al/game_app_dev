@@ -6,15 +6,18 @@ public class Game {
     private String imageUrl;
     private String rating;
     private String genre;
-    private String description; // New field for description
+    private String description;
 
-    public Game(String name, String releaseDate, String imageUrl, String rating, String genre, String description) {
+    private String developers;
+
+    public Game(String name, String releaseDate, String imageUrl, String rating, String genre, String description, String developers) {
         this.name = name;
         this.releaseDate = releaseDate;
         this.imageUrl = imageUrl;
         this.rating = rating;
         this.genre = genre;
         this.description = description;
+        this.developers = developers;
     }
 
     public String getDescription() {
@@ -63,5 +66,13 @@ public class Game {
 
     public void setGenre(String genre) {
         this.genre = genre;
+    }
+
+    public String getDevelopers() {
+        return developers;
+    }
+
+    public void setDevelopers(String genre) {
+        this.developers = developers;
     }
 }

@@ -32,7 +32,6 @@ android {
 }
 
 dependencies {
-
     implementation ("org.apache.commons:commons-text:1.9")
     implementation ("com.squareup.picasso:picasso:2.71828")
     implementation("com.google.android.material:material:1.11.0")

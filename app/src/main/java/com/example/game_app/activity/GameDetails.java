@@ -13,15 +13,14 @@ import androidx.fragment.app.Fragment;
 
 import com.example.game_app.R;
 import com.example.game_app.models.Game;
-import com.example.game_app.services.DataService;
 import com.squareup.picasso.Picasso;
 
 public class GameDetails extends Fragment {
 
-    private int position;
+    private Game game;
 
-    public GameDetails(int position) {
-        this.position = position;
+    public GameDetails(Game game) {
+        this.game = game;
     }
 
     @Nullable
@@ -31,7 +30,6 @@ public class GameDetails extends Fragment {
         View view = inflater.inflate(R.layout.fragment_game_details, container, false);
 
         // Retrieve the game object based on the position
-        Game game = DataService.getClickedGame(position);
 
         // Bind views
         ImageView gameDetailImg = view.findViewById(R.id.gameDetailImg);

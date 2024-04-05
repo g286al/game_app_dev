@@ -2,6 +2,7 @@ package com.example.game_app.services;
 
 import android.os.StrictMode;
 
+import com.example.game_app.adapters.FetchDataListener;
 import com.example.game_app.models.Game;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -19,12 +20,22 @@ import java.net.URL;
 import java.util.ArrayList;
 
 public class DataService {
-    private static String url = "https://api.rawg.io/api/games?key=2c8eecb3a50b49038dea2be27a8711a9";
-    private static String nextURL;
-    private static String previousURL;
-    private static final ArrayList<Game> arrGame = new ArrayList<>();
-    private static int position;
-    public static ArrayList<Game> getArrGame(String gURL) {
+    public String url = "https://api.rawg.io/api/games?key=2c8eecb3a50b49038dea2be27a8711a9";
+    private String nextURL;
+    private String previousURL;
+    private ArrayList<Game> arrGame = new ArrayList<>();
+    public FetchDataListener fetchDataListener;
+
+    private  int position;
+
+    public DataService(FetchDataListener fetchDataListener) {
+        this.fetchDataListener = fetchDataListener;
+        this.arrGame = new  ArrayList<Game>();
+        this.arrGame = getArrGame(this.url);
+    }
+
+    public ArrayList<Game> getArrGame(String gURL) {
+        arrGame = new ArrayList<Game>();
         String key  = "?key=2c8eecb3a50b49038dea2be27a8711a9";
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
@@ -54,8 +65,9 @@ public class DataService {
                     genre += ",";
                 }
                 String description = getDescriptionById(id);
+                String developers = getDeveloperById(id);
 
-                Game game = new Game(name, releaseDate, imgURL,rating,genre,description);
+                Game game = new Game(name, releaseDate, imgURL,rating,genre,description,developers);
                 arrGame.add(game);
             }
 
@@ -64,21 +76,22 @@ public class DataService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        fetchDataListener.didFinishFetchingData(arrGame);
 
         return arrGame;
     }
-    public static Game getClickedGame(int position){
+    public Game getClickedGame(int position){
         return arrGame.get(position);
     }
-    public static ArrayList<Game> getArrGame() {
-        return getArrGame(url);
+    public ArrayList<Game> getArrGame() {
+        return arrGame;
     }
 
-    public static ArrayList<Game> getNext(){
+    public ArrayList<Game> getNext(){
         return getArrGame(nextURL);
     }
 
-    public static ArrayList<Game> getPrev() {
+    public ArrayList<Game> getPrev() {
         if (previousURL == null)
         {
             return null;
@@ -87,7 +100,7 @@ public class DataService {
         return getArrGame(previousURL);
     }
 
-    private static String getDescriptionById(String id) {
+    private String getDescriptionById(String id) {
         try {
             URL url = new URL("https://api.rawg.io/api/games"+ "/"+ id +"?key=2c8eecb3a50b49038dea2be27a8711a9");
             HttpURLConnection request = (HttpURLConnection) url.openConnection();
@@ -110,7 +123,7 @@ public class DataService {
         }
         return null;
     }
-    private static String getDeveloperById(String id) {
+    private String getDeveloperById(String id) {
         try {
             URL url = new URL("https://api.rawg.io/api/games"+ "/"+ id +"?key=2c8eecb3a50b49038dea2be27a8711a9");
             HttpURLConnection request = (HttpURLConnection) url.openConnection();
@@ -121,10 +134,12 @@ public class DataService {
             JsonObject rootObj = root.getAsJsonObject();
             JsonArray developersarray = rootObj.getAsJsonArray("developers");
             String developers = "";
-            for (JsonElement je : developersarray){
-                JsonObject genreObj = je.getAsJsonObject();
+            for (int i = 0; i < developersarray.size(); i++) {
+                JsonObject genreObj = developersarray.get(i).getAsJsonObject();
                 developers += genreObj.get("name").getAsString();
-                developers += ",";
+                if (i < developersarray.size() - 1) {
+                    developers += ", ";
+                }
             }
             return developers;
 

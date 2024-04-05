@@ -1,20 +1,20 @@
 package com.example.game_app.activity;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.game_app.R;
+import com.example.game_app.adapters.EndlessScrollListener;
 import com.example.game_app.adapters.GameAdapter;
 import com.example.game_app.adapters.ItemClickListener;
+import com.example.game_app.adapters.OnScrollListener;
 import com.example.game_app.models.Game;
-import com.example.game_app.services.DataService;
+import com.example.game_app.models.WrapContentGridLayoutManager;
 
 import java.util.ArrayList;
 
@@ -22,11 +22,18 @@ public class GamesListFragment extends Fragment {
 
     public ItemClickListener itemClickListener2;
     public ItemClickListener itemClickListener;
-    public RecyclerView recyclerView;
-    public GameAdapter gameAdapter;
 
-    public GamesListFragment(ItemClickListener itemClickListener) {
+    public OnScrollListener getOnScrollListener() {
+        return onScrollListener;
+    }
+
+    public OnScrollListener onScrollListener;
+    public RecyclerView recyclerView;
+    public ArrayList<Game> arrGame = new ArrayList<Game>();
+    public GameAdapter gameAdapter;
+    public GamesListFragment(ItemClickListener itemClickListener, OnScrollListener onScrollListener) {
         this.itemClickListener = itemClickListener;
+        this.onScrollListener = onScrollListener;
     }
 
 //    public static GamesListFragment newInstance(String param1, String param2) {
@@ -50,9 +57,9 @@ public class GamesListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_games_list, container, false);
+        WrapContentGridLayoutManager layoutManager = new WrapContentGridLayoutManager(getContext(), 2);
         recyclerView = view.findViewById(R.id.r_view);
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
-        ArrayList<Game> arrGame = DataService.getArrGame();
+        recyclerView.setLayoutManager(layoutManager);
         itemClickListener2 = new ItemClickListener() {
             @Override
             public void onClick(int position) {
@@ -61,6 +68,24 @@ public class GamesListFragment extends Fragment {
         };
         gameAdapter = new GameAdapter(getContext(), arrGame, itemClickListener2);
         recyclerView.setAdapter(gameAdapter);
+        recyclerView.addOnScrollListener(new EndlessScrollListener(layoutManager) {
+            @Override
+            public void onLoadMore() {
+                onScrollListener.onScrollEnd();
+            }
+        });
         return view;
+    }
+    public void updateData(ArrayList<Game> updatedArrGame){
+        int currArrSize = this.arrGame.size();
+        this.arrGame.addAll(updatedArrGame);
+        if(currArrSize == 0)
+        {
+            //gameAdapter.notifyItemRangeInserted(currArrSize,currArrSize);
+        }
+        else{
+            gameAdapter.notifyItemRangeInserted(currArrSize - 1,currArrSize);
+        }
+
     }
 }
