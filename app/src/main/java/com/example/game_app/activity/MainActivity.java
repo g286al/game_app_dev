@@ -7,57 +7,48 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.game_app.R;
-import com.example.game_app.adapters.FetchDataListener;
 import com.example.game_app.adapters.ItemClickListener;
 import com.example.game_app.adapters.OnScrollListener;
-import com.example.game_app.models.Game;
-import com.example.game_app.services.DataService;
+import com.example.game_app.viewmodel.MainActivityViewModel;
 
-import java.util.ArrayList;
+public class MainActivity extends AppCompatActivity implements OnScrollListener, ItemClickListener {
+    GamesListFragment mFragment;
 
-public class MainActivity extends AppCompatActivity {
-    DataService dataService;
-    ItemClickListener itemClickListener;
-    OnScrollListener onScrollListener;
-    FetchDataListener fetchDataListener;
-    Fragment mFragment;
-
+    MainActivityViewModel viewModel;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        viewModel = new MainActivityViewModel();
         setContentView(R.layout.activity_main);
-        GamesListFragment mFragment = new GamesListFragment(itemClickListener = new ItemClickListener() {
-            @Override
-            public void onClick(int position) {
-                didTapGame(position);
-            }
-        },onScrollListener = new OnScrollListener() {
-            @Override
-            public void onScrollEnd() {
-                dataService.getNext();
-            }
-        });
 
-        dataService = new DataService(new FetchDataListener() {
-            @Override
-            public void didFinishFetchingData(ArrayList<Game> gameList) {
-                mFragment.updateData(gameList);
-            }
-        });
+        mFragment = new GamesListFragment(this,this);
 
-                FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.frameLayout, mFragment).commit();
+        viewModel.newItems.observe(this,games -> {
+            mFragment.updateData(games);
+        });
     }
 
     void didTapGame(int position) {
-        Fragment mFragment = new GameDetails(dataService.getClickedGame(position));
+        Fragment mFragment = new GameDetails(viewModel.getGameByPos(position));
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.frameLayout, mFragment).addToBackStack("Shalom").commit();
     }
-    void tapNext()
-    {
 
+    @Override
+    public void onScrollEnd() {
+        viewModel.fetchMoreData();
+//        viewModel.newItems.observe(this,games -> {
+//            mFragment.updateData(games);
+//        });
+
+    }
+
+    @Override
+    public void onClick(int position) {
+        didTapGame(position);
     }
 }

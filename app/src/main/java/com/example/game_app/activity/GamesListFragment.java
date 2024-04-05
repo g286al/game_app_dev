@@ -81,7 +81,7 @@ public class GamesListFragment extends Fragment {
         this.arrGame.addAll(updatedArrGame);
         if(currArrSize == 0)
         {
-            //gameAdapter.notifyItemRangeInserted(currArrSize,currArrSize);
+            gameAdapter.notifyItemRangeInserted(0,updatedArrGame.size());
         }
         else{
             gameAdapter.notifyItemRangeInserted(currArrSize - 1,currArrSize);

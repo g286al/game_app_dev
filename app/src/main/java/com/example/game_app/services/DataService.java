@@ -1,5 +1,7 @@
 package com.example.game_app.services;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.os.StrictMode;
 
 import com.example.game_app.adapters.FetchDataListener;
@@ -31,73 +33,69 @@ public class DataService {
     public DataService(FetchDataListener fetchDataListener) {
         this.fetchDataListener = fetchDataListener;
         this.arrGame = new  ArrayList<Game>();
-        this.arrGame = getArrGame(this.url);
+        getArrGame(this.url);
     }
 
-    public ArrayList<Game> getArrGame(String gURL) {
+    public void getArrGame(String gURL) {
         arrGame = new ArrayList<Game>();
         String key  = "?key=2c8eecb3a50b49038dea2be27a8711a9";
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-        try {
-            URL url = new URL(gURL);
-            HttpURLConnection request = (HttpURLConnection) url.openConnection();
-            request.connect();
-            JsonParser jp = new JsonParser();
-            JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent()));
+        new Thread(new Runnable(){
+            @Override
+            public void run() {
+                StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+                StrictMode.setThreadPolicy(policy);
+                try {
+                    URL url = new URL(gURL);
+                    HttpURLConnection request = (HttpURLConnection) url.openConnection();
+                    request.connect();
+                    JsonParser jp = new JsonParser();
+                    JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent()));
 
-            JsonObject rootObj = root.getAsJsonObject();
-            nextURL = rootObj.get("next").getAsString();
-            previousURL = rootObj.get("previous").isJsonNull() ? null : rootObj.get("previous").getAsString();
-            JsonArray resultsArray = rootObj.getAsJsonArray("results");
-            for (JsonElement je : resultsArray) {
-                JsonObject obj = je.getAsJsonObject();
-                String id = obj.get("id").getAsString();
-                String name = obj.get("name").getAsString();
-                String releaseDate = obj.get("released").getAsString();
-                String imgURL = obj.get("background_image").getAsString();
-                String rating = obj.get("rating").getAsString();
-                JsonArray genereArray = obj.getAsJsonArray("genres");
-                String genre = "";
-                for (JsonElement jeGenre : genereArray){
-                    JsonObject genreObj = jeGenre.getAsJsonObject();
-                    genre += genreObj.get("name").getAsString();
-                    genre += ",";
+                    JsonObject rootObj = root.getAsJsonObject();
+                    nextURL = rootObj.get("next").getAsString();
+                    previousURL = rootObj.get("previous").isJsonNull() ? null : rootObj.get("previous").getAsString();
+                    JsonArray resultsArray = rootObj.getAsJsonArray("results");
+                    for (JsonElement je : resultsArray) {
+                        JsonObject obj = je.getAsJsonObject();
+                        String id = obj.get("id").getAsString();
+                        String name = obj.get("name").getAsString();
+                        String releaseDate = obj.get("released").getAsString();
+                        String imgURL = obj.get("background_image").getAsString();
+                        String rating = obj.get("rating").getAsString();
+                        JsonArray genereArray = obj.getAsJsonArray("genres");
+                        String genre = "";
+                        for (JsonElement jeGenre : genereArray){
+                            JsonObject genreObj = jeGenre.getAsJsonObject();
+                            genre += genreObj.get("name").getAsString();
+                            genre += ",";
+                        }
+                        String description = getDescriptionById(id);
+                        String developers = getDeveloperById(id);
+
+                        Game game = new Game(name, releaseDate, imgURL,rating,genre,description,developers);
+                        arrGame.add(game);
+                    }
+
+                } catch (MalformedURLException e) {
+                    throw new RuntimeException(e);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
-                String description = getDescriptionById(id);
-                String developers = getDeveloperById(id);
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        fetchDataListener.didFinishFetchingData(arrGame);
+                    }
+                });
 
-                Game game = new Game(name, releaseDate, imgURL,rating,genre,description,developers);
-                arrGame.add(game);
-            }
-
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        fetchDataListener.didFinishFetchingData(arrGame);
-
-        return arrGame;
-    }
-    public Game getClickedGame(int position){
-        return arrGame.get(position);
-    }
-    public ArrayList<Game> getArrGame() {
-        return arrGame;
+            };
+        }).start();
     }
 
-    public ArrayList<Game> getNext(){
-        return getArrGame(nextURL);
-    }
 
-    public ArrayList<Game> getPrev() {
-        if (previousURL == null)
-        {
-            return null;
-        }
 
-        return getArrGame(previousURL);
+    public void getNext(){
+        getArrGame(nextURL);
     }
 
     private String getDescriptionById(String id) {
