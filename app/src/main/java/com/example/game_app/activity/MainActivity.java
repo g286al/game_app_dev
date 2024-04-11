@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements OnScrollListener,
     @Override
     public void onScrollEnd() {
         viewModel.fetchMoreData();
+
 //        viewModel.newItems.observe(this,games -> {
 //            mFragment.updateData(games);
 //        });

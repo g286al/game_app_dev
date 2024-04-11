@@ -24,12 +24,20 @@ public class MainActivityViewModel extends ViewModel implements FetchDataListene
             arrGame.setValue(new ArrayList<>());
         }
         ArrayList<Game> tempList = arrGame.getValue();
+
+//        for (Game game : gameList) {
+//            if (!arrGame.contains(game)) {
+//                tempList.add(game);
+//            }
+//        }
+
         if (tempList != null) {
             tempList.addAll(gameList);
         }
         arrGame.setValue(tempList);
         newItems.setValue(gameList);
     }
+
     public void fetchMoreData(){
         dataService.getNext();
     }

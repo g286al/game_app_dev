@@ -31,6 +31,7 @@ public class GamesListFragment extends Fragment {
     public RecyclerView recyclerView;
     public ArrayList<Game> arrGame = new ArrayList<Game>();
     public GameAdapter gameAdapter;
+    public EndlessScrollListener endlessScrollListener;
     public GamesListFragment(ItemClickListener itemClickListener, OnScrollListener onScrollListener) {
         this.itemClickListener = itemClickListener;
         this.onScrollListener = onScrollListener;
@@ -68,17 +69,19 @@ public class GamesListFragment extends Fragment {
         };
         gameAdapter = new GameAdapter(getContext(), arrGame, itemClickListener2);
         recyclerView.setAdapter(gameAdapter);
-        recyclerView.addOnScrollListener(new EndlessScrollListener(layoutManager) {
+        endlessScrollListener = new EndlessScrollListener(layoutManager) {
             @Override
             public void onLoadMore() {
                 onScrollListener.onScrollEnd();
             }
-        });
+        };
+        recyclerView.addOnScrollListener(endlessScrollListener);
         return view;
     }
     public void updateData(ArrayList<Game> updatedArrGame){
         int currArrSize = this.arrGame.size();
         this.arrGame.addAll(updatedArrGame);
+        endlessScrollListener.setLoading(false);
         if(currArrSize == 0)
         {
             gameAdapter.notifyItemRangeInserted(0,updatedArrGame.size());

@@ -22,13 +22,12 @@ import java.net.URL;
 import java.util.ArrayList;
 
 public class DataService {
-    public String url = "https://api.rawg.io/api/games?key=2c8eecb3a50b49038dea2be27a8711a9";
+    public String url = "https://api.rawg.io/api/games?key=150ca83dbba045dbbe31302938032a3f";
     private String nextURL;
     private String previousURL;
     private ArrayList<Game> arrGame = new ArrayList<>();
     public FetchDataListener fetchDataListener;
-
-    private  int position;
+    private  int limit = 0;
 
     public DataService(FetchDataListener fetchDataListener) {
         this.fetchDataListener = fetchDataListener;
@@ -38,7 +37,7 @@ public class DataService {
 
     public void getArrGame(String gURL) {
         arrGame = new ArrayList<Game>();
-        String key  = "?key=2c8eecb3a50b49038dea2be27a8711a9";
+        String key  = "150ca83dbba045dbbe31302938032a3f";
         new Thread(new Runnable(){
             @Override
             public void run() {
@@ -50,10 +49,9 @@ public class DataService {
                     request.connect();
                     JsonParser jp = new JsonParser();
                     JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent()));
-
+                    request.disconnect();
                     JsonObject rootObj = root.getAsJsonObject();
                     nextURL = rootObj.get("next").getAsString();
-                    previousURL = rootObj.get("previous").isJsonNull() ? null : rootObj.get("previous").getAsString();
                     JsonArray resultsArray = rootObj.getAsJsonArray("results");
                     for (JsonElement je : resultsArray) {
                         JsonObject obj = je.getAsJsonObject();
@@ -69,9 +67,11 @@ public class DataService {
                             genre += genreObj.get("name").getAsString();
                             genre += ",";
                         }
-                        String description = getDescriptionById(id);
-                        String developers = getDeveloperById(id);
-
+//                      JsonElement jRoot = getGameExtraDetails(id, key);
+//                      String description = getDescriptionById(jRoot);
+//                      String developers = getDeveloperById(jRoot);
+                        String description = "";
+                        String developers = "";
                         Game game = new Game(name, releaseDate, imgURL,rating,genre,description,developers);
                         arrGame.add(game);
                     }
@@ -92,19 +92,33 @@ public class DataService {
         }).start();
     }
 
-
-
-    public void getNext(){
-        getArrGame(nextURL);
-    }
-
-    private String getDescriptionById(String id) {
+    private JsonElement getGameExtraDetails(String id,String key)
+    {
         try {
-            URL url = new URL("https://api.rawg.io/api/games"+ "/"+ id +"?key=2c8eecb3a50b49038dea2be27a8711a9");
+            URL url = new URL("https://api.rawg.io/api/games"+ "/"+ id +"?key=" + key);
             HttpURLConnection request = (HttpURLConnection) url.openConnection();
             request.connect();
             JsonParser jp = new JsonParser();
             JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent()));
+
+            return root;
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public void getNext() {
+
+        if (limit < 3) {
+            getArrGame(nextURL);
+            limit ++;
+        }
+    }
+
+    private String getDescriptionById(JsonElement root) {
 
             JsonObject rootObj = root.getAsJsonObject();
             String description = rootObj.get("description").getAsString();
@@ -114,20 +128,8 @@ public class DataService {
             encodedString = (index != -1) ? encodedString.substring(0, index) : encodedString;
             return StringEscapeUtils.unescapeJava(encodedString);
 
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
-    private String getDeveloperById(String id) {
-        try {
-            URL url = new URL("https://api.rawg.io/api/games"+ "/"+ id +"?key=2c8eecb3a50b49038dea2be27a8711a9");
-            HttpURLConnection request = (HttpURLConnection) url.openConnection();
-            request.connect();
-            JsonParser jp = new JsonParser();
-            JsonElement root = jp.parse(new InputStreamReader((InputStream) request.getContent()));
+    private String getDeveloperById(JsonElement root) {
 
             JsonObject rootObj = root.getAsJsonObject();
             JsonArray developersarray = rootObj.getAsJsonArray("developers");
@@ -140,12 +142,5 @@ public class DataService {
                 }
             }
             return developers;
-
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 }
