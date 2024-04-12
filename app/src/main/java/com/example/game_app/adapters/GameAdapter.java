@@ -22,6 +22,10 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.MyViewHolder> 
     public ItemClickListener ItemClickListener;
     int selectedPosition=-1;
 
+ public  GameAdapter(Context context, ArrayList<Game> arrGame){
+        this.context = context;
+        this.arrGame = arrGame;
+    }
 
     public GameAdapter(Context context, ArrayList<Game> arrGame,ItemClickListener ItemClickListener) {
         this.context = context;
@@ -35,6 +39,8 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.MyViewHolder> 
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.r_view_row, parent, false);
         return new MyViewHolder(view);
     }
+
+
     @Override
     public long getItemId(int position) {
         return position;
@@ -50,13 +56,13 @@ public class GameAdapter extends RecyclerView.Adapter<GameAdapter.MyViewHolder> 
         Game game = arrGame.get(position);
         holder.name.setText(game.getName());
         holder.release.setText(game.getReleaseDate());
-        Picasso.get().load(game.getImageUrl()).resize(2480,1600).into(holder.img);
+        Picasso.get().load(game.getImageUrl()).resize(400,400).into(holder.img);
         int currentPosition = holder.getAdapterPosition();
-
+        String currentName = game.getName();
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ItemClickListener.onClick(currentPosition);
+                ItemClickListener.onClick(currentName);
             }
         });
     }

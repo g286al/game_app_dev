@@ -31,8 +31,8 @@ public class MainActivity extends AppCompatActivity implements OnScrollListener,
         });
     }
 
-    void didTapGame(int position) {
-        Fragment mFragment = new GameDetails(viewModel.getGameByPos(position));
+    void didTapGame(String name) {
+        Fragment mFragment = new GameDetails(viewModel.getGameByName(name));
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.frameLayout, mFragment).addToBackStack("Shalom").commit();
@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements OnScrollListener,
     }
 
     @Override
-    public void onClick(int position) {
-        didTapGame(position);
+    public void onClick(String name) {
+        didTapGame(name);
     }
 }

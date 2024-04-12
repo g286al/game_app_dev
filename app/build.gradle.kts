@@ -32,9 +32,9 @@ android {
 }
 
 dependencies {
-
     implementation ("androidx.lifecycle:lifecycle-viewmodel:2.7.0")
     implementation ("androidx.lifecycle:lifecycle-livedata:2.7.0")
+    implementation("androidx.appcompat:appcompat:1.6.1")
     annotationProcessor ("androidx.lifecycle:lifecycle-compiler:2.7.0")
     implementation ("org.apache.commons:commons-text:1.9")
     implementation ("com.squareup.picasso:picasso:2.71828")

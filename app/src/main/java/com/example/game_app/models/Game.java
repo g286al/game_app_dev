@@ -1,24 +1,28 @@
 package com.example.game_app.models;
 
 public class Game {
+
+
+    private String id;
     private String name;
     private String releaseDate;
     private String imageUrl;
     private String rating;
     private String genre;
     private String description;
-
+    private boolean ifClickedFlag = false;
     private String developers;
 
-    public Game(String name, String releaseDate, String imageUrl, String rating, String genre, String description, String developers) {
+    public Game(String id,String name, String releaseDate, String imageUrl, String rating, String genre) {
+        this.id = id;
         this.name = name;
         this.releaseDate = releaseDate;
         this.imageUrl = imageUrl;
         this.rating = rating;
         this.genre = genre;
-        this.description = description;
-        this.developers = developers;
     }
+
+    public String getId() {return id;}
 
     public String getDescription() {
         return description;
@@ -74,5 +78,14 @@ public class Game {
 
     public void setDevelopers(String genre) {
         this.developers = developers;
+    }
+
+    public boolean AlreadyClicked() {
+        if(!ifClickedFlag)
+        {
+            ifClickedFlag = true;
+            return false;
+        }
+        return true;
     }
 }

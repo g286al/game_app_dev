@@ -1,5 +1,6 @@
 package com.example.game_app.viewmodel;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -13,6 +14,16 @@ public class MainActivityViewModel extends ViewModel implements FetchDataListene
     public MutableLiveData<ArrayList<Game>> arrGame = new MutableLiveData<>();
     public MutableLiveData<ArrayList<Game>> newItems = new MutableLiveData<>();
     private DataService dataService;
+
+    private MutableLiveData<ArrayList<Game>> filteredGames = new MutableLiveData<>();
+
+    public void setFilteredGames(ArrayList<Game> games) {
+        filteredGames.setValue(games);
+    }
+
+    public LiveData<ArrayList<Game>> getFilteredGames() {
+        return filteredGames;
+    }
 
     public MainActivityViewModel() {
         this.dataService = new DataService(this);
@@ -42,6 +53,22 @@ public class MainActivityViewModel extends ViewModel implements FetchDataListene
         dataService.getNext();
     }
     public Game getGameByPos(int position){
-        return arrGame.getValue().get(position);
+        Game choosenGame = arrGame.getValue().get(position);
+        dataService.GatherMoreInfo(choosenGame);
+        return choosenGame;
+    }
+
+    public Game getGameByPosfilter(int position){
+        Game choosenGame = filteredGames.getValue().get(position);
+        dataService.GatherMoreInfo(choosenGame);
+        return choosenGame;
+    }
+
+    public Game getGameByName(String name) {
+        Game choosenGame = arrGame.getValue().stream().filter(game -> game.getName().equals(name)).findFirst().orElse(null);
+        if(choosenGame != null) {
+            dataService.GatherMoreInfo(choosenGame);
+        }
+        return choosenGame;
     }
 }
